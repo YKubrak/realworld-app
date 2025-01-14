@@ -17,11 +17,11 @@ const awsConfig = require(path.join(__dirname, "./aws-exports-es5.js"));
 module.exports = defineConfig({
   projectId: "7s5okt",
   env: {
-    apiUrl: "http://localhost:3002",
+    apiUrl: "http://localhost:3012",
     mobileViewportWidthBreakpoint: 414,
     coverage: false,
     codeCoverage: {
-      url: "http://localhost:3002/__coverage__",
+      url: "http://localhost:3012/__coverage__",
       exclude: "cypress/**/*.*",
     },
     defaultPassword: process.env.SEED_DEFAULT_USER_PASSWORD,
@@ -64,7 +64,7 @@ module.exports = defineConfig({
   },
   e2e: {
     baseUrl: "http://localhost:3000",
-    specPattern: "cypress/tests/**/*.spec.{js,jsx,ts,tsx}",
+    specPattern: "cypress/tests/**/*.{spec,cy}.{js,jsx,ts,tsx}",
     supportFile: "cypress/support/e2e.ts",
     viewportHeight: 1000,
     viewportWidth: 1280,

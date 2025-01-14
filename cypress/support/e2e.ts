@@ -2,6 +2,7 @@
 import "@cypress/code-coverage/support";
 import "./commands";
 import { isMobile } from "./utils";
+import 'cypress-plugin-api'
 
 beforeEach(() => {
   // cy.intercept middleware to remove 'if-none-match' headers from all requests

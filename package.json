@@ -2,10 +2,7 @@
   "name": "cypress-realworld-app",
   "version": "1.0.0",
   "description": "A payment application to demonstrate **real-world** usage of Cypress testing methods, patterns, and workflows. For a full reference of our documentation, go to https://docs.cypress.io",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cypress-io/cypress-realworld-app.git"
-  },
+  "repository": "https://github.com/cypress-io/cypress-realworld-app.git",
   "author": "Cypress DX Team",
   "license": "MIT",
   "bugs": {
@@ -30,6 +27,7 @@
     "aws-amplify": "4.3.20",
     "axios": "0.26.1",
     "clsx": "1.1.1",
+    "cypress-plugin-api": "^2.11.2",
     "date-fns": "2.28.0",
     "detect-port": "1.3.0",
     "dinero.js": "1.9.1",
@@ -46,16 +44,17 @@
     "shortid": "2.2.16",
     "uuid": "8.3.2",
     "xstate": "4.31.0",
-    "yup": "0.32.11"
+    "yup": "0.32.11",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.0-dev.1",
     "@cypress/instrument-cra": "1.4.0",
     "@cypress/react": "^5.10.0",
     "@cypress/webpack-dev-server": "^1.6.0",
-    "@faker-js/faker": "6.1.2",
+    "@faker-js/faker": "8.4.1",
     "@percy/cypress": "2.3.4",
-    "@playwright/test": "^1.22.2",
+    "@playwright/test": "^1.34.3",
     "@types/bcryptjs": "2.4.2",
     "@types/bluebird": "3.5.36",
     "@types/connect-flash": "0.0.37",
@@ -75,7 +74,7 @@
     "@types/lodash": "4.14.181",
     "@types/lowdb": "1.0.11",
     "@types/morgan": "1.9.3",
-    "@types/node": "14.18.13",
+    "@types/node": "^16.18.115",
     "@types/passport": "1.0.7",
     "@types/react": "17.0.44",
     "@types/react-dom": "17.0.15",
@@ -161,12 +160,12 @@
     "test:unit:ci": "react-scripts test --watchAll false --ci --runInBand",
     "test:component:ci": "yarn cypress:run:component",
     "start:api": "yarn tsnode --files backend/app.ts",
-    "start:api:watch": "nodemon --exec yarn tsnode --watch 'backend' backend/app.ts",
+    "start:api:watch": "nodemon --exec yarn tsnode -T --watch 'backend' backend/app.ts",
     "start:react:proxy-server": "yarn tsnode scripts/testServer.ts",
     "prettier": "prettier --write '**/**.{ts,js,tsx}' '*.{json,md,yml}'",
     "tsnode": "nyc --silent ts-node -P tsconfig.tsnode.json",
     "tsnode:not-instrumented": "ts-node -P tsconfig.tsnode.json",
-    "db:seed": "yarn tsnode scripts/generateSeedData",
+    "db:seed": "yarn tsnode -T scripts/generateSeedData",
     "predb:seed:dev": "yarn predev:cognito:ci",
     "db:seed:dev": "ncp ./data/database-seed.json ./data/database.json",
     "db:seed:empty": "ncp ./data/empty-seed.json ./data/database.json",
@@ -182,7 +181,7 @@
     "codesandbox:start:api": "yarn tsnode:not-instrumented --files backend/app.ts",
     "codesandbox:start": "NODE_ENV=development TSC_COMPILE_ON_ERROR=true concurrently \"react-scripts start\" yarn:start:api:codesandbox",
     "postinstall": "husky install",
-    "pwtest": "yarn playwright test playwright/tests/example/"
+    "pwtest": "yarn playwright test playwright/tests/e2e/"
   },
   "eslintConfig": {
     "env": {
@@ -240,5 +239,6 @@
       "html",
       "json"
     ]
-  }
+  },
+  "main": "index.js"
 }

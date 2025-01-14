@@ -6,15 +6,6 @@ declare namespace Cypress {
   import { publicTransactionService } from "../src/machines/publicTransactionsMachine";
   import { contactsTransactionService } from "../src/machines/contactsTransactionsMachine";
   import { personalTransactionService } from "../src/machines/personalTransactionsMachine";
-  import {
-    User,
-    BankAccount,
-    Like,
-    Comment,
-    Transaction,
-    BankTransfer,
-    Contact,
-  } from "../src/models";
 
   interface CustomWindow extends Window {
     authService: typeof authService;
@@ -144,5 +135,15 @@ declare namespace Cypress {
      * Logs in to AWS Cognito via Amplify Auth API bypassing UI using Cypress Task
      */
     loginByCognitoApi(username: string, password: string): Chainable<any>;
+
+    registerAccount(firstname: string, lastname:string, username: string, password: string): Chainable<any>;
+
+    finishAccountOnboarding(bankName: string, routingNumber: string, accountNumber: string): Chainable<Response>;
+
+    signupByApi(firstName: string, lastName: string, username: string, password: string): Chainable<Response>;
+
+    createTransactionByApi(transactionType: string, amount: number, description: string, receiverId: string): Chainable<Response>;
+
+    addCommentToTransaction(transactionId: string, comment: string): Chainable<Response>;
   }
 }

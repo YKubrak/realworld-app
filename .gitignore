@@ -43,3 +43,7 @@ amplifyconfiguration.json
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
