@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
+import NewAccountModel from "../../models/graphql/NewAccountModel.mjs";
+import LoginModel from "../../models/graphql/LoginModel.mjs";
+import CreateBankAccModel from "../../models/graphql/CreateBankAccModel.mjs";
+import DeleteBankAccModel from "../../models/graphql/DeleteBankAccModel.mjs";
+import GetBankAccListModel from "../../models/graphql/GetBankAccListModel.mjs";
 
 test.describe("Deleting data", () => {
   let userId;
@@ -12,22 +17,9 @@ test.describe("Deleting data", () => {
   const bankName = faker.company.name();
   const accountNumber = faker.string.numeric(9);
   const routingNumber = faker.string.numeric(9);
-  const accCredentials = {
-    data: {
-      "firstname":`${firstName}`,
-      "lastname":`${lastName}`,
-      "username":`${username}`,
-      "password":`${password}`,
-      "confirmPassword":`${password}`
-    }
-  };
-  const loginCredentials = {
-    data: {
-      "type":"LOGIN",
-      "username":`${username}`,
-      "password":`${password}`
-    }
-  };
+
+  const accCredentials = new NewAccountModel(firstName, lastName, username, password);
+  const loginCredentials = new LoginModel(username, password);
 
   test.beforeEach(async ({request}) => {
     await test.step('Creating an account', async () => {
@@ -43,18 +35,7 @@ test.describe("Deleting data", () => {
     });
 
     await test.step('Add a bank account', async () => {
-      const bankRequest = {
-        data: {
-          "operationName":"CreateBankAccount",
-          "query":"\n  mutation CreateBankAccount($bankName: String!, $accountNumber: String!, $routingNumber: String!) {\n    createBankAccount(\n      bankName: $bankName\n      accountNumber: $accountNumber\n      routingNumber: $routingNumber\n    ) {\n      id\n      uuid\n      userId\n      bankName\n      accountNumber\n      routingNumber\n      isDeleted\n      createdAt\n    }\n  }\n",
-          "variables":{
-            "userId":`${userId}`,
-            "bankName":`${bankName}`,
-            "accountNumber":`${accountNumber}`,
-            "routingNumber":`${routingNumber}`
-          }
-        }
-      };
+      const bankRequest = new CreateBankAccModel(userId, bankName, accountNumber, routingNumber);
 
       const response = await request.post(`http://localhost:${process.env.REACT_APP_BACKEND_PORT}/graphql`, bankRequest);
       bankAccount = await response.json();
@@ -64,15 +45,7 @@ test.describe("Deleting data", () => {
 
   test("Deletes a bank account", async ({request}) => {
     await test.step('Deletes a bank account assigned to the account', async () => {
-      const deleteRequest = {
-        data: {
-          "operationName":"DeleteBankAccount",
-          "query":"\n  mutation DeleteBankAccount($id: ID!) {\n    deleteBankAccount(id: $id)\n  }\n",
-          "variables":{
-            "id":`${accountId}`,
-          }
-        }
-      };
+      const deleteRequest = new DeleteBankAccModel(accountId);
 
       const response = await request.post(`http://localhost:${process.env.REACT_APP_BACKEND_PORT}/graphql`, deleteRequest);
       expect(response.status()).toEqual(200);
@@ -92,12 +65,7 @@ test.describe("Deleting data", () => {
         "userId": `${userId}`,
         "uuid": expect.any(String)
       };
-      const bankListRequest = {
-        data: {
-          "operationName":"ListBankAccount",
-          "query":"\n  query ListBankAccount {\n    listBankAccount {\n      id\n      uuid\n      userId\n      bankName\n      accountNumber\n      routingNumber\n      isDeleted\n      createdAt\n      modifiedAt\n    }\n  }\n"
-        }
-      };
+      const bankListRequest = new GetBankAccListModel();
 
       const response = await request.post(`http://localhost:${process.env.REACT_APP_BACKEND_PORT}/graphql`, bankListRequest);
       expect(response.status()).toEqual(200);

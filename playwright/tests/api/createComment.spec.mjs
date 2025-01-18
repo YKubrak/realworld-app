@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
+import NewAccountModel from "../../models/graphql/NewAccountModel.mjs";
+import LoginModel from "../../models/graphql/LoginModel.mjs";
+import CreateTransactionModel from "../../models/graphql/CreateTransactionModel.mjs";
+import AddCommentModel from "../../models/graphql/AddCommentModel.mjs";
 
 test.describe("Creating a comment for a transaction", () => {
   let senderId;
@@ -9,22 +13,9 @@ test.describe("Creating a comment for a transaction", () => {
   const lastName = faker.person.lastName();
   const username = faker.internet.userName();
   const password = faker.internet.password();
-  const senderCredentials = {
-    data: {
-      "firstname":`${firstName}`,
-      "lastname":`${lastName}`,
-      "username":`${username}`,
-      "password":`${password}`,
-      "confirmPassword":`${password}`
-    }
-  };
-  const loginCredentials = {
-    data: {
-      "type":"LOGIN",
-      "username":`${username}`,
-      "password":`${password}`
-    }
-  };
+  const senderCredentials = new NewAccountModel(firstName, lastName, username, password);
+
+  const loginCredentials = new LoginModel(username, password);
 
   test.beforeEach(async ({request}) => {
     await test.step('Creating a recipient account', async () => {
@@ -32,15 +23,7 @@ test.describe("Creating a comment for a transaction", () => {
       const recipientLastName = faker.person.lastName();
       const recipientUsername = faker.internet.userName();
       const recipientPassword = faker.internet.password();
-      const recipientCredentials = {
-        data: {
-          "firstname":`${recipientFirstName}`,
-          "lastname":`${recipientLastName}`,
-          "username":`${recipientUsername}`,
-          "password":`${recipientPassword}`,
-          "confirmPassword":`${recipientPassword}`
-        }
-      };
+      const recipientCredentials = new NewAccountModel(recipientFirstName, recipientLastName, recipientUsername, recipientPassword);
 
       const signUp = await request.post(`http://localhost:${process.env.REACT_APP_BACKEND_PORT}/users`,recipientCredentials);
       const accountData = await signUp.json();
@@ -63,15 +46,13 @@ test.describe("Creating a comment for a transaction", () => {
     });
 
     await test.step('Create a transaction', async () => {
-      const transactionRequest = {
-        data: {
-          "transactionType": "payment",
-          "amount": "100",
-          "description": "Test of comments",
-          "senderId": `${senderId}`,
-          "receiverId": `${recipientId}`,
-        }
-      };
+      const transactionRequest = new CreateTransactionModel(
+        "payment",
+        100,
+        "Test of comments",
+        senderId,
+        recipientId
+      )
 
       const response = await request.post(`http://localhost:${process.env.REACT_APP_BACKEND_PORT}/transactions`, transactionRequest);
       const newTransaction  = await response.json();
@@ -83,12 +64,7 @@ test.describe("Creating a comment for a transaction", () => {
     const comment = faker.lorem.paragraph();
 
     await test.step('Add a comment to the transaction', async () => {
-      const commentRequest = {
-        data: {
-          "transactionId":`${transactionId}`,
-          "content":`${comment}`
-        }
-      };
+      const commentRequest = new AddCommentModel(transactionId, comment);
 
       const response = await request.post(`http://localhost:${process.env.REACT_APP_BACKEND_PORT}/comments/${transactionId}`, commentRequest);
       expect(response.status()).toEqual(200);

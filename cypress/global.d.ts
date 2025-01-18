@@ -145,5 +145,9 @@ declare namespace Cypress {
     createTransactionByApi(transactionType: string, amount: number, description: string, receiverId: string): Chainable<Response>;
 
     addCommentToTransaction(transactionId: string, comment: string): Chainable<Response>;
+
+    createBankAccByApi(userId: number, bankName: string, accountNumber:number, routingNumber: number);
+
+    deleteBankAccByApi(accountId: string)
   }
 }

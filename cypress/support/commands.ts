@@ -115,6 +115,31 @@ Cypress.Commands.add("createTransactionByApi", (transactionType, amount, descrip
     });
 });
 
+Cypress.Commands.add("createBankAccByApi", (userId, bankName, accountNumber, routingNumber) => {
+  return cy.api("POST", `${Cypress.env("apiUrl")}/graphql`,
+    {
+      "operationName":"CreateBankAccount",
+      "query":"\n  mutation CreateBankAccount($bankName: String!, $accountNumber: String!, $routingNumber: String!) {\n    createBankAccount(\n      bankName: $bankName\n      accountNumber: $accountNumber\n      routingNumber: $routingNumber\n    ) {\n      id\n      uuid\n      userId\n      bankName\n      accountNumber\n      routingNumber\n      isDeleted\n      createdAt\n    }\n  }\n",
+      "variables":{
+        "userId": userId,
+        "bankName": bankName,
+        "accountNumber": accountNumber,
+        "routingNumber": routingNumber
+      }
+    });
+});
+
+Cypress.Commands.add("deleteBankAccByApi", (accountId) => {
+  return cy.api("POST", `${Cypress.env("apiUrl")}/graphql`,
+    {
+      "operationName":"DeleteBankAccount",
+      "query":"\n  mutation DeleteBankAccount($id: ID!) {\n    deleteBankAccount(id: $id)\n  }\n",
+      "variables":{
+        "id": accountId
+      }
+    });
+});
+
 Cypress.Commands.add("addCommentToTransaction", (transactionId, comment) => {
   return cy.api("POST", `${Cypress.env("apiUrl")}/comments/${transactionId}`, {
     "transactionId":`${transactionId}`,

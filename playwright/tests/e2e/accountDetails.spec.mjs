@@ -1,79 +1,88 @@
 import { test, expect } from '@playwright/test';
+import SignInPage from "../../POM/SignInPage.mjs";
+import HomePage from "../../POM/HomePage.mjs";
+import MyTransactionsPage from "../../POM/MyTransactionsPage.mjs";
+import TransactionDetailsPage from "../../POM/TransactionDetailsPage.mjs";
+import { TEST_DATA } from "../../dict/testData.mjs";
 
 test.describe('Correct data can be seen in the app', ()=> {
-  const username = "Zelma9";
-  const password = "s3cret";
-  const firstname = "Katelin";
-  const lastname = "Herzog";
+  let signInPage;
+  let homePage;
+  let myTransactionsPage;
+  let transactionDetailsPage;
+  const username = TEST_DATA.testuser.username;
+  const password = TEST_DATA.testuser.password;
+  const firstname = TEST_DATA.testuser.firstname;
+  const lastname = TEST_DATA.testuser.lastname;
+  const transactionId = TEST_DATA.testuser.transactionExample.transactionId;
+  const transactionPath = TEST_DATA.testuser.transactionExample.payment;
+  const transactionAmount= TEST_DATA.testuser.transactionExample.transactionAmount;
+  const transactionLikeCount = TEST_DATA.testuser.transactionExample.transactionLikeCount;
+  const senderName = TEST_DATA.testuser.transactionExample.senderName;
 
   test.beforeEach(async ({page})=> {
-    await page.goto('/signin');
-    await page.locator('input[name="username"]').fill(username);
-    await page.locator('input[name="password"]').fill(password);
-    await page.locator('[data-test="signin-submit"]').click()
-    await page.waitForURL('/');
+    signInPage = new SignInPage(page);
+    await signInPage.navigate();
+    await signInPage.signIn(username, password);
+    homePage = new HomePage(page);
   });
 
   test('Should see account details', async ({page})=> {
     const fullName = (`${firstname} ${lastname.charAt(0)}`);
 
     await test.step('Validate account details can be seen',async () =>{
-      await expect(page.locator('[data-test="sidenav-user-full-name"]')).toContainText(fullName);
-      await expect(page.locator('[data-test="sidenav-username"]')).toContainText(username);
+      await expect(homePage.fullName).toContainText(fullName);
+      await expect(homePage.username).toContainText(username);
     });
   });
 
   test('Should see account balance', async ({page})=> {
-    const currentBalance = "$1,878.12";
+    const currentBalance = TEST_DATA.testuser.balance;
     const balanceString = "Account Balance";
 
     await test.step('Validate account balance can be seen',async () =>{
-      await expect(page.locator('[data-test="sidenav-user-balance"]')).toContainText(currentBalance);
-      await expect(page.locator('[data-test="sidenav-user-balance"] + h6')).toContainText(balanceString);
+      await expect(homePage.amountBalance).toContainText(currentBalance);
+      await expect(homePage.balanceString).toContainText(balanceString);
     });
   });
 
   test('Should see account transactions history', async ({page})=> {
-    const exampleTransaction= "Payment: mhKmSKllAl to AMuFaCffm";
-
     await test.step('Open the personal transactions history', async () =>{
-      await page.locator('[data-test="nav-personal-tab"]').click();
-      await page.waitForURL('/personal');
+      await homePage.myTransactionBtn.click();
+      myTransactionsPage = new MyTransactionsPage(page);
+      await myTransactionsPage.waitLoaded();
     });
 
     await test.step('Validate transactions history can be seen',async () =>{
-      await page.locator('[data-test="transaction-list"]').isVisible();
-      await expect(page.locator('[data-test="transaction-item-PDdAUKgMr35"]'))
-        .toContainText(exampleTransaction);
+      await myTransactionsPage.trasactionList.isVisible();
+      await expect(page.locator(`[data-test="transaction-item-${transactionId}"]`))
+        .toContainText(`Payment: ${transactionPath}`);
     });
   });
 
   test('Should see account transaction details', async ({page})=> {
-    const transactionId = "PDdAUKgMr35";
-    const transactionAmount= "-$62.48"
-    const transactionLikeCount = "0";
-    const senderName = "Marisol Bins";
-    const recieverName = `${firstname} ${lastname}`;
+    const recieverName = TEST_DATA.testuser.transactionExample.recieverName;
 
     await test.step('Open the personal transactions history and click on transaction', async () =>{
-      await page.locator('[data-test="nav-personal-tab"]').click();
-      await page.waitForURL('/personal');
-      await page.locator(`[data-test="transaction-item-${transactionId}"]`).click();
-      await page.waitForURL(`/transaction/${transactionId}`);
+      await homePage.myTransactionBtn.click();
+      myTransactionsPage = new MyTransactionsPage(page);
+      await myTransactionsPage.waitLoaded();
+      await myTransactionsPage.openTransaction(transactionId);
     });
 
     await test.step('Validate transaction details can be seen',async () =>{
-      await expect(page.locator('[data-test="transaction-detail-header"]'))
+      transactionDetailsPage = new TransactionDetailsPage(page, transactionId);
+      await expect(transactionDetailsPage.title)
         .toContainText("Transaction Detail");
-      await expect(page.locator(`[data-test="transaction-sender-${transactionId}"]`))
+      await expect(transactionDetailsPage.sender)
         .toContainText(senderName);
-      await expect(page.locator(`[data-test="transaction-action-${transactionId}"]`))
+      await expect(transactionDetailsPage.transactionType)
         .toContainText(" paid ");
-      await expect(page.locator(`[data-test="transaction-receiver-${transactionId}"]`))
+      await expect(transactionDetailsPage.reciever)
         .toContainText(recieverName);
-      await expect(page.locator(`[data-test="transaction-amount-${transactionId}"]`))
+      await expect(transactionDetailsPage.amount)
         .toContainText(transactionAmount);
-      await expect(page.locator(`[data-test="transaction-like-count-${transactionId}"]`))
+      await expect(transactionDetailsPage.likeCount)
         .toContainText(transactionLikeCount);
     });
   });
