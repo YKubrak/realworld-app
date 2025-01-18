@@ -86,10 +86,66 @@ Cypress.Commands.add("login", (username, password, { rememberUser = false } = {}
 });
 
 Cypress.Commands.add("loginByApi", (username, password = Cypress.env("defaultPassword")) => {
-  return cy.request("POST", `${Cypress.env("apiUrl")}/login`, {
-    username,
-    password,
-  });
+  return cy.request("POST", `${Cypress.env("apiUrl")}/login`,
+     {
+       type:"LOGIN",
+       username,
+       password
+    });
+});
+
+Cypress.Commands.add("signupByApi", (firstName, lastName, username, password) => {
+  return cy.api("POST", `${Cypress.env("apiUrl")}/users`,
+    {
+      "firstname":`${firstName}`,
+      "lastname":`${lastName}`,
+      "username":`${username}`,
+      "password":`${password}`,
+      "confirmPassword":`${password}`
+    });
+});
+
+Cypress.Commands.add("createTransactionByApi", (transactionType, amount, description, receiverId) => {
+  return cy.api("POST", `${Cypress.env("apiUrl")}/transactions`,
+    {
+      "transactionType": transactionType,
+      "amount": amount,
+      "description": description,
+      "receiverId": receiverId,
+    });
+});
+
+Cypress.Commands.add("createBankAccByApi", (userId, bankName, accountNumber, routingNumber) => {
+  return cy.api("POST", `${Cypress.env("apiUrl")}/graphql`,
+    {
+      "operationName":"CreateBankAccount",
+      "query":"\n  mutation CreateBankAccount($bankName: String!, $accountNumber: String!, $routingNumber: String!) {\n    createBankAccount(\n      bankName: $bankName\n      accountNumber: $accountNumber\n      routingNumber: $routingNumber\n    ) {\n      id\n      uuid\n      userId\n      bankName\n      accountNumber\n      routingNumber\n      isDeleted\n      createdAt\n    }\n  }\n",
+      "variables":{
+        "userId": userId,
+        "bankName": bankName,
+        "accountNumber": accountNumber,
+        "routingNumber": routingNumber
+      }
+    });
+});
+
+Cypress.Commands.add("deleteBankAccByApi", (accountId) => {
+  return cy.api("POST", `${Cypress.env("apiUrl")}/graphql`,
+    {
+      "operationName":"DeleteBankAccount",
+      "query":"\n  mutation DeleteBankAccount($id: ID!) {\n    deleteBankAccount(id: $id)\n  }\n",
+      "variables":{
+        "id": accountId
+      }
+    });
+});
+
+Cypress.Commands.add("addCommentToTransaction", (transactionId, comment) => {
+  return cy.api("POST", `${Cypress.env("apiUrl")}/comments/${transactionId}`, {
+    "transactionId":`${transactionId}`,
+    "content":`${comment}`
+    },
+   );
 });
 
 Cypress.Commands.add("reactComponent", { prevSubject: "element" }, ($el) => {
@@ -362,4 +418,72 @@ Cypress.Commands.add("loginByGoogleApi", () => {
       cy.visit("/");
     });
   });
+});
+
+Cypress.Commands.add("registerAccount", (firstname, lastname, username, password) => {
+  const signupPath = "/signup";
+  const log = Cypress.log({
+    name: "signup",
+    displayName: "Sign Up",
+    message: [`🔐 Creating account | ${username}`],
+    // @ts-ignore
+    autoEnd: false,
+  });
+
+  cy.intercept("POST", "/users").as("createUser");
+
+  cy.location("pathname", { log: false }).then((currentPath) => {
+    if (currentPath !== signupPath) {
+      cy.visit(signupPath);
+    }
+  });
+
+  log.snapshot("before");
+
+  cy.getBySel("signup-first-name").type(firstname);
+  cy.getBySel("signup-last-name").type(lastname);
+  cy.getBySel("signup-username").type(username);
+  cy.getBySel("signup-password").type(password);
+  cy.getBySel("signup-confirmPassword").type(password);
+
+  cy.getBySel("signup-submit").click();
+  cy.wait("@createUser").then((createUser: any) => {
+    log.set({
+      consoleProps() {
+        return {
+          username,
+          password,
+          userId: createUser.response.statusCode !== 401 && createUser.response.body.user.id,
+        };
+      },
+    });
+
+    log.snapshot("after");
+    log.end();
+  });
+});
+
+Cypress.Commands.add("finishAccountOnboarding", (bankName, routingNumber, accountNumber) => {
+  const homePage = "/";
+  const log = Cypress.log({
+    name: "onboarding",
+    displayName: "Finishing the account onboarding",
+    message: [`🔐 Adding bank data`],
+    // @ts-ignore
+    autoEnd: false,
+  });
+
+  cy.location("pathname", { log: false }).then((currentPath) => {
+    if (currentPath !== homePage) {
+      cy.visit(homePage);
+    }
+  });
+
+  cy.getBySel("user-onboarding-next").click();
+  cy.getBySel("bankaccount-bankName-input").type(bankName);
+  cy.getBySel("bankaccount-routingNumber-input").type(routingNumber);
+  cy.getBySel("bankaccount-accountNumber-input").type(accountNumber);
+  cy.getBySel("bankaccount-submit").click();
+  cy.getBySel("user-onboarding-next").click();
+
 });

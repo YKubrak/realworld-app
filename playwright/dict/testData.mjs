@@ -1,0 +1,110 @@
+export const TEST_DATA = {
+  "testuser": {
+  "username": "Alexandre20",
+    "password": "s3cret",
+    "firstname": "Joanny",
+    "lastname": "Hayes",
+    "balance": "$1,911.13",
+    "transactionExample": {
+    "transactionId": "DDfPtlXawiUj",
+      "payment": "ltaTqqaXJw to mhKmSKllAl",
+      "senderName": "Joanny Hayes",
+      "transactionType": "paid",
+      "recieverName": "Marisol Bins",
+      "transactionAmount": "$42.69",
+      "transactionLikeCount": "0"
+  },
+  "bankAccount": {
+    "accountNumber": "8182230499",
+      "bankName": "Crona, Borer and Bode Bank",
+      "createdAt": "2024-09-27T23:09:39.061Z",
+      "id": "dcB3UkPkeB9",
+      "isDeleted": false,
+      "modifiedAt": "2024-10-28T07:29:50.476Z",
+      "routingNumber": "031230548",
+      "userId": "ltaTqqaXJw",
+      "uuid": "1e7ce77c-8c6f-4c9e-b9c8-007cb37177eb"
+  },
+  "getUser": {
+    "id": "4ErOUDeYxp",
+      "uuid": "171b5ae6-55ab-4d9c-8a9b-48901cc9c633",
+      "firstName": "Elinor",
+      "lastName": "Flatley",
+      "username": "Addie.Mraz45",
+      "password": "$2a$10$oLUtAz9e1X99g5.iwwosn.7itemgvuPZGJsY4.NeB7coDk1kNrY.6",
+      "email": "Kane.Batz@yahoo.com",
+      "phoneNumber": "698-982-7284",
+      "avatar": "https://avatars.dicebear.com/api/human/4ErOUDeYxp.svg",
+      "defaultPrivacyLevel": "public",
+      "balance": 185936,
+      "createdAt": "2024-04-02T10:36:42.428Z",
+      "modifiedAt": "2024-10-28T06:04:38.035Z"
+  },
+  "listOfUsers": [
+    {
+      "id": "AMuFaCffm",
+      "uuid": "a43d6a13-dbea-4d7a-80ce-18dc0ead31d6",
+      "firstName": "Katelin",
+      "lastName": "Herzog",
+      "username": "Zelma9",
+      "password": "$2a$10$oLUtAz9e1X99g5.iwwosn.7itemgvuPZGJsY4.NeB7coDk1kNrY.6",
+      "email": "Elenor.Hane96@yahoo.com",
+      "phoneNumber": "609-440-5647",
+      "avatar": "https://avatars.dicebear.com/api/human/AMuFaCffm.svg",
+      "defaultPrivacyLevel": "public",
+      "balance": 187812,
+      "createdAt": "2024-03-16T06:27:13.478Z",
+      "modifiedAt": "2024-10-28T05:15:37.297Z"
+    },
+    {
+      "id": "4ErOUDeYxp",
+      "uuid": "171b5ae6-55ab-4d9c-8a9b-48901cc9c633",
+      "firstName": "Elinor",
+      "lastName": "Flatley",
+      "username": "Addie.Mraz45",
+      "password": "$2a$10$oLUtAz9e1X99g5.iwwosn.7itemgvuPZGJsY4.NeB7coDk1kNrY.6",
+      "email": "Kane.Batz@yahoo.com",
+      "phoneNumber": "698-982-7284",
+      "avatar": "https://avatars.dicebear.com/api/human/4ErOUDeYxp.svg",
+      "defaultPrivacyLevel": "public",
+      "balance": 185936,
+      "createdAt": "2024-04-02T10:36:42.428Z",
+      "modifiedAt": "2024-10-28T06:04:38.035Z"
+    },
+    {
+      "id": "mhKmSKllAl",
+      "uuid": "f7d1f542-b0f2-4e14-8e32-d80df584fe3d",
+      "firstName": "Marisol",
+      "lastName": "Bins",
+      "username": "Brooks3",
+      "password": "$2a$10$oLUtAz9e1X99g5.iwwosn.7itemgvuPZGJsY4.NeB7coDk1kNrY.6",
+      "email": "Wilfrid_Ratke@gmail.com",
+      "phoneNumber": "908-286-0802",
+      "avatar": "https://avatars.dicebear.com/api/human/mhKmSKllAl.svg",
+      "defaultPrivacyLevel": "public",
+      "balance": 24786,
+      "createdAt": "2024-01-26T10:07:44.991Z",
+      "modifiedAt": "2024-10-28T11:00:25.464Z"
+    },
+    {
+      "id": "tWjDPFBJcY",
+      "uuid": "2dc479e6-f777-4152-b7b9-89d21205f681",
+      "firstName": "Chasity",
+      "lastName": "Prosacco",
+      "username": "Leora_Lesch73",
+      "password": "$2a$10$oLUtAz9e1X99g5.iwwosn.7itemgvuPZGJsY4.NeB7coDk1kNrY.6",
+      "email": "Orin_Rowe@gmail.com",
+      "phoneNumber": "986-470-1989",
+      "avatar": "https://avatars.dicebear.com/api/human/tWjDPFBJcY.svg",
+      "defaultPrivacyLevel": "contacts",
+      "balance": 128858,
+      "createdAt": "2024-06-28T03:23:45.295Z",
+      "modifiedAt": "2024-10-27T21:55:03.498Z"
+    }
+  ]
+},
+  "invaliduser": {
+  "username": "invalid_username",
+    "password": "invalid_password"
+}
+}
